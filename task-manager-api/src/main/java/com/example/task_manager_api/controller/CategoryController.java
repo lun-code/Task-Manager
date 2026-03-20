@@ -4,6 +4,7 @@ import com.example.task_manager_api.dto.category.CategoryCreateDTO;
 import com.example.task_manager_api.dto.category.CategoryPatchDTO;
 import com.example.task_manager_api.dto.category.CategoryResponseDTO;
 import com.example.task_manager_api.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +33,14 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryCreateDTO categoryCreateDTO) {
+    public ResponseEntity<CategoryResponseDTO> createCategory(@Valid @RequestBody CategoryCreateDTO categoryCreateDTO) {
         CategoryResponseDTO savedCategory = categoryService.save(categoryCreateDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory); // HTTP 201 Created y DTO
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<CategoryResponseDTO> patchCategory(@PathVariable Long id, @RequestBody CategoryPatchDTO categoryPatchDTO) {
+    public ResponseEntity<CategoryResponseDTO> patchCategory(@Valid @PathVariable Long id, @RequestBody CategoryPatchDTO categoryPatchDTO) {
         CategoryResponseDTO patchedCategory = categoryService.patch(id, categoryPatchDTO);
 
         return ResponseEntity.ok(patchedCategory);

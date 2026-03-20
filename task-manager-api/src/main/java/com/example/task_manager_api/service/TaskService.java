@@ -91,6 +91,8 @@ public class TaskService {
             throw new ResourceNotFoundException("Task not found with id: " + id);
         }
 
+        // Este try-catch no debería ejecutarse nunca, ya que ninguna tabla apunta a Task con FK.
+        // Se mantiene por seguridad defensiva, por si en el futuro se añaden relaciones nuevas.
         try {
             taskRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {

@@ -38,9 +38,12 @@ public class CategoryService {
                 .name(categoryCreateDTO.name())
                 .build();
 
-        Category savedCategory = categoryRepository.save(category);
-
-        return buildResponse(savedCategory);
+        try {
+            Category savedCategory = categoryRepository.save(category);
+            return buildResponse(savedCategory);
+        } catch (DataIntegrityViolationException ex) {
+            throw new DataIntegrityViolationException("Category with name " + categoryCreateDTO.name() + " already exists");
+        }
     }
 
     public CategoryResponseDTO patch(Long id, CategoryPatchDTO categoryPatchDTO) {
@@ -51,9 +54,12 @@ public class CategoryService {
             category.setName(categoryPatchDTO.name());
         }
 
-        Category savedCategory = categoryRepository.save(category);
-
-        return buildResponse(savedCategory);
+        try {
+            Category savedCategory = categoryRepository.save(category);
+            return buildResponse(savedCategory);
+        } catch (DataIntegrityViolationException ex) {
+            throw new DataIntegrityViolationException("Category with name " + categoryPatchDTO.name() + " already exists");
+        }
     }
 
     public void delete(Long id) {
