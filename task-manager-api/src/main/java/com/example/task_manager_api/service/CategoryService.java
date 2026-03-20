@@ -42,7 +42,7 @@ public class CategoryService {
             Category savedCategory = categoryRepository.save(category);
             return buildResponse(savedCategory);
         } catch (DataIntegrityViolationException ex) {
-            throw new DataIntegrityViolationException("Category with name " + categoryCreateDTO.name() + " already exists");
+            throw new DataConflictException("Category with name " + categoryCreateDTO.name() + " already exists");
         }
     }
 
@@ -58,7 +58,7 @@ public class CategoryService {
             Category savedCategory = categoryRepository.save(category);
             return buildResponse(savedCategory);
         } catch (DataIntegrityViolationException ex) {
-            throw new DataIntegrityViolationException("Category with name " + categoryPatchDTO.name() + " already exists");
+            throw new DataConflictException("Category with name " + categoryPatchDTO.name() + " already exists");
         }
     }
 

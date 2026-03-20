@@ -48,6 +48,6 @@ public class GlobalExceptionHandler {
         // En consola podemos ver el error real para poder arreglarlo
         log.error("Unexpected error", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Internal Server Error: " + ex.getMessage());
+                .body("Internal Server Error");
     }
 }

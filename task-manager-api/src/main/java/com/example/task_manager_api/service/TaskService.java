@@ -25,7 +25,7 @@ public class TaskService {
     private final CategoryRepository categoryRepository;
 
     public List<TaskResponseDTO> findAll() {
-        return taskRepository.findAll()
+        return taskRepository.findAllWithCategory()
                 .stream() // Convertimos la lista en un flujo de datos
                 .map(this::buildResponse) // Pasamos cada Task por el traductor
                 .toList(); // Volvemos a agrupar en una lista

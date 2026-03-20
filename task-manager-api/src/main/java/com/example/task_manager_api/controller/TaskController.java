@@ -41,7 +41,7 @@ public class TaskController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<TaskResponseDTO> patchTask(@PathVariable UUID id, @RequestBody TaskPatchDTO taskPatchDTO) {
+    public ResponseEntity<TaskResponseDTO> patchTask(@Valid @PathVariable UUID id, @RequestBody TaskPatchDTO taskPatchDTO) {
         TaskResponseDTO patchedTask = taskService.patch(id, taskPatchDTO);
 
         return ResponseEntity.ok(patchedTask);
