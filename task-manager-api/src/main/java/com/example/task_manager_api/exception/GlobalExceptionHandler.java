@@ -16,13 +16,13 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 1. Maneja nuestros 404 Not Found (Recurso no existe)
+    // 1. Maneja 404 Not Found (Recurso no existe)
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
-    // 2. Maneja nuestros 409 Conflict (Errores de integridad de BD)
+    // 2. Maneja 409 Conflict (Errores de integridad de BD)
     @ExceptionHandler(DataConflictException.class)
     public ResponseEntity<String> handleDataConflict(DataConflictException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
     // 4. El "paracaídas" para errores inesperados (500 Internal Server Error)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleInternalError(Exception ex) {
-        // En consola verás el error real para poder arreglarlo
+        // En consola podemos ver el error real para poder arreglarlo
         log.error("Unexpected error", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Internal Server Error: " + ex.getMessage());
