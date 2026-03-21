@@ -1,6 +1,7 @@
 package com.example.task_manager_api.service;
 
 import com.example.task_manager_api.dto.task.TaskCreateDTO;
+import com.example.task_manager_api.dto.task.TaskPageResponseDTO;
 import com.example.task_manager_api.dto.task.TaskPatchDTO;
 import com.example.task_manager_api.dto.task.TaskResponseDTO;
 import com.example.task_manager_api.entity.Category;
@@ -8,12 +9,16 @@ import com.example.task_manager_api.exception.DataConflictException;
 import com.example.task_manager_api.exception.ResourceNotFoundException;
 import com.example.task_manager_api.repository.CategoryRepository;
 import com.example.task_manager_api.repository.TaskRepository;
+import com.example.task_manager_api.specification.TaskSpecification;
 import lombok.RequiredArgsConstructor;
 import com.example.task_manager_api.entity.Task;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,11 +29,26 @@ public class TaskService {
 
     private final CategoryRepository categoryRepository;
 
-    public List<TaskResponseDTO> findAll() {
-        return taskRepository.findAllWithCategory()
-                .stream() // Convertimos la lista en un flujo de datos
-                .map(this::buildResponse) // Pasamos cada Task por el traductor
-                .toList(); // Volvemos a agrupar en una lista
+    public TaskPageResponseDTO findAll(Boolean completed, Long categoryId, int page, int size) {
+        // 1. Construimos el filtro combinando las Specifications
+        // Si ambos parámetros son null, no se aplica ningún filtro y devuelve todo
+        Specification<Task> filters = Specification
+                .where(TaskSpecification.hasCompleted(completed))
+                .and(TaskSpecification.hasCategory(categoryId));
+
+        // 2. Construimos el objeto de paginación: qué página y cuantos elementos por página
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 3. Consultamos la BD con los filtros y la paginación aplicados
+        Page<Task> taskPage = taskRepository.findAll(filters, pageable);
+
+        // 4. Construimos el DTO de respuesta con los datos de la página
+        return new TaskPageResponseDTO(
+                taskPage.getContent().stream().map(this::buildResponse).toList(),
+                taskPage.getNumber(),
+                taskPage.getTotalPages(),
+                taskPage.getTotalElements()
+        );
     }
 
     public TaskResponseDTO findById(UUID id) {

@@ -40,7 +40,7 @@ public class CategoryController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<CategoryResponseDTO> patchCategory(@Valid @PathVariable Long id, @RequestBody CategoryPatchDTO categoryPatchDTO) {
+    public ResponseEntity<CategoryResponseDTO> patchCategory(@PathVariable Long id, @Valid @RequestBody CategoryPatchDTO categoryPatchDTO) {
         CategoryResponseDTO patchedCategory = categoryService.patch(id, categoryPatchDTO);
 
         return ResponseEntity.ok(patchedCategory);

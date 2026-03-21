@@ -1,6 +1,7 @@
 package com.example.task_manager_api.controller;
 
 import com.example.task_manager_api.dto.task.TaskCreateDTO;
+import com.example.task_manager_api.dto.task.TaskPageResponseDTO;
 import com.example.task_manager_api.dto.task.TaskPatchDTO;
 import com.example.task_manager_api.dto.task.TaskResponseDTO;
 import com.example.task_manager_api.service.TaskService;
@@ -10,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -20,10 +20,15 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<List<TaskResponseDTO>> getAllTasks() {
-        List<TaskResponseDTO> tasks = taskService.findAll();
+    public ResponseEntity<TaskPageResponseDTO> getAllTasks(
+            @RequestParam(required = false) Boolean completed,        // ?completed=true (opcional)
+            @RequestParam(required = false) Long categoryId,          // ?categoryId=2 (opcional)
+            @RequestParam(defaultValue = "0") int page,               // ?page=0 (por defecto página 0)
+            @RequestParam(defaultValue = "10") int size               // ?size=10 (por defecto 10 elementos)
+    ) {
+        TaskPageResponseDTO tasks = taskService.findAll(completed, categoryId, page, size);
 
-        return ResponseEntity.ok(tasks); // HTTP 200 OK y DTO
+        return ResponseEntity.ok(tasks);
     }
 
     @GetMapping("/{id}")
