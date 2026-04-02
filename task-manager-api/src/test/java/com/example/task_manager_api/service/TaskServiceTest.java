@@ -6,9 +6,12 @@ import com.example.task_manager_api.dto.task.TaskPatchDTO;
 import com.example.task_manager_api.dto.task.TaskResponseDTO;
 import com.example.task_manager_api.entity.Category;
 import com.example.task_manager_api.entity.Task;
+import com.example.task_manager_api.entity.User;
 import com.example.task_manager_api.exception.ResourceNotFoundException;
 import com.example.task_manager_api.repository.CategoryRepository;
 import com.example.task_manager_api.repository.TaskRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -19,6 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +45,29 @@ class TaskServiceTest {
     @InjectMocks
     private TaskService taskService;
 
+    private User mockUser;
+
+    @BeforeEach
+    void setUp() {
+        mockUser = User.builder()
+                .id(1L)
+                .email("test@test.com")
+                .build();
+
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(mockUser);
+
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        SecurityContextHolder.setContext(securityContext);
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
     // ========================
     // findAll
     // ========================
@@ -52,9 +81,9 @@ class TaskServiceTest {
                 .title("Tarea 1")
                 .completed(false)
                 .category(category)
+                .user(mockUser)
                 .build();
 
-        // PageImpl es la implementación de Page que usa Spring internamente
         Page<Task> page = new PageImpl<>(List.of(task), PageRequest.of(0, 10), 1);
         when(taskRepository.findAll(ArgumentMatchers.<Specification<Task>>any(), any(PageRequest.class))).thenReturn(page);
 
@@ -97,8 +126,9 @@ class TaskServiceTest {
                 .title("Tarea 1")
                 .completed(false)
                 .category(category)
+                .user(mockUser)
                 .build();
-        when(taskRepository.findById(id)).thenReturn(Optional.of(task));
+        when(taskRepository.findByIdAndUser(id, mockUser)).thenReturn(Optional.of(task));
 
         // WHEN
         TaskResponseDTO result = taskService.findById(id);
@@ -112,7 +142,7 @@ class TaskServiceTest {
     void findById_shouldThrowException_whenNotExists() {
         // GIVEN
         UUID id = UUID.randomUUID();
-        when(taskRepository.findById(id)).thenReturn(Optional.empty());
+        when(taskRepository.findByIdAndUser(id, mockUser)).thenReturn(Optional.empty());
 
         // THEN
         assertThatThrownBy(() -> taskService.findById(id))
@@ -120,8 +150,8 @@ class TaskServiceTest {
     }
 
     // ========================
-// save
-// ========================
+    // save
+    // ========================
 
     @Test
     void save_shouldReturnSavedTask() {
@@ -134,6 +164,7 @@ class TaskServiceTest {
                 .description("Descripción")
                 .completed(false)
                 .category(category)
+                .user(mockUser)
                 .build();
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
         when(taskRepository.save(any(Task.class))).thenReturn(saved);
@@ -158,9 +189,9 @@ class TaskServiceTest {
                 .hasMessageContaining("99");
     }
 
-// ========================
-// patch
-// ========================
+    // ========================
+    // patch
+    // ========================
 
     @Test
     void patch_shouldReturnUpdatedTask() {
@@ -172,6 +203,7 @@ class TaskServiceTest {
                 .title("Tarea 1")
                 .completed(false)
                 .category(category)
+                .user(mockUser)
                 .build();
         TaskPatchDTO dto = new TaskPatchDTO("Tarea actualizada", null, true, null);
         Task updated = Task.builder()
@@ -179,8 +211,9 @@ class TaskServiceTest {
                 .title("Tarea actualizada")
                 .completed(true)
                 .category(category)
+                .user(mockUser)
                 .build();
-        when(taskRepository.findById(id)).thenReturn(Optional.of(task));
+        when(taskRepository.findByIdAndUser(id, mockUser)).thenReturn(Optional.of(task));
         when(taskRepository.save(any(Task.class))).thenReturn(updated);
 
         // WHEN
@@ -196,7 +229,7 @@ class TaskServiceTest {
         // GIVEN
         UUID id = UUID.randomUUID();
         TaskPatchDTO dto = new TaskPatchDTO("Tarea actualizada", null, null, null);
-        when(taskRepository.findById(id)).thenReturn(Optional.empty());
+        when(taskRepository.findByIdAndUser(id, mockUser)).thenReturn(Optional.empty());
 
         // THEN
         assertThatThrownBy(() -> taskService.patch(id, dto))
@@ -213,9 +246,10 @@ class TaskServiceTest {
                 .title("Tarea 1")
                 .completed(false)
                 .category(category)
+                .user(mockUser)
                 .build();
         TaskPatchDTO dto = new TaskPatchDTO(null, null, null, 99L);
-        when(taskRepository.findById(id)).thenReturn(Optional.of(task));
+        when(taskRepository.findByIdAndUser(id, mockUser)).thenReturn(Optional.of(task));
         when(categoryRepository.findById(99L)).thenReturn(Optional.empty());
 
         // THEN
@@ -232,7 +266,15 @@ class TaskServiceTest {
     void delete_shouldDeleteTask_whenExists() {
         // GIVEN
         UUID id = UUID.randomUUID();
-        when(taskRepository.existsById(id)).thenReturn(true);
+        Category category = Category.builder().id(1L).name("Estudio").build();
+        Task task = Task.builder()
+                .id(id)
+                .title("Tarea 1")
+                .completed(false)
+                .category(category)
+                .user(mockUser)
+                .build();
+        when(taskRepository.findByIdAndUser(id, mockUser)).thenReturn(Optional.of(task));
 
         // WHEN
         taskService.delete(id);
@@ -245,7 +287,7 @@ class TaskServiceTest {
     void delete_shouldThrowException_whenNotExists() {
         // GIVEN
         UUID id = UUID.randomUUID();
-        when(taskRepository.existsById(id)).thenReturn(false);
+        when(taskRepository.findByIdAndUser(id, mockUser)).thenReturn(Optional.empty());
 
         // THEN
         assertThatThrownBy(() -> taskService.delete(id))

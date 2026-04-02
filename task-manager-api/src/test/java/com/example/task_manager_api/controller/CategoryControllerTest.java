@@ -1,5 +1,6 @@
 package com.example.task_manager_api.controller;
 
+import com.example.task_manager_api.config.TestSecurityConfig;
 import com.example.task_manager_api.dto.category.CategoryCreateDTO;
 import com.example.task_manager_api.dto.category.CategoryResponseDTO;
 import com.example.task_manager_api.exception.ResourceNotFoundException;
@@ -8,7 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -18,23 +21,25 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(CategoryController.class) // Levanta solo el controlador de categorías
+@WebMvcTest(CategoryController.class)
+@Import(TestSecurityConfig.class)
 class CategoryControllerTest {
 
     @Autowired
-    private MockMvc mockMvc; // Simula las peticiones HTTP
+    private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper; // Convierte objetos Java a JSON y viceversa
+    private ObjectMapper objectMapper;
 
     @MockitoBean
-    private CategoryService categoryService; // Mock del servicio
+    private CategoryService categoryService;
 
     // ========================
     // GET /api/categories
     // ========================
 
     @Test
+    @WithMockUser
     void getAllCategories_shouldReturn200WithList() throws Exception {
         // GIVEN
         CategoryResponseDTO category = CategoryResponseDTO.builder().id(1L).name("Estudio").build();
@@ -51,6 +56,7 @@ class CategoryControllerTest {
     // ========================
 
     @Test
+    @WithMockUser
     void getCategoryById_shouldReturn200_whenExists() throws Exception {
         // GIVEN
         CategoryResponseDTO category = CategoryResponseDTO.builder().id(1L).name("Estudio").build();
@@ -63,6 +69,7 @@ class CategoryControllerTest {
     }
 
     @Test
+    @WithMockUser
     void getCategoryById_shouldReturn404_whenNotExists() throws Exception {
         // GIVEN
         when(categoryService.findById(99L)).thenThrow(new ResourceNotFoundException("Category not found with id 99"));
@@ -77,6 +84,7 @@ class CategoryControllerTest {
     // ========================
 
     @Test
+    @WithMockUser
     void createCategory_shouldReturn201_whenValid() throws Exception {
         // GIVEN
         CategoryCreateDTO dto = new CategoryCreateDTO("Estudio");
@@ -92,8 +100,9 @@ class CategoryControllerTest {
     }
 
     @Test
+    @WithMockUser
     void createCategory_shouldReturn400_whenNameIsBlank() throws Exception {
-        // GIVEN - nombre vacío, fallará la validación @NotBlank
+        // GIVEN
         CategoryCreateDTO dto = new CategoryCreateDTO("");
 
         // WHEN + THEN
@@ -108,6 +117,7 @@ class CategoryControllerTest {
     // ========================
 
     @Test
+    @WithMockUser
     void patchCategory_shouldReturn200_whenValid() throws Exception {
         // GIVEN
         CategoryResponseDTO response = CategoryResponseDTO.builder().id(1L).name("Trabajo").build();
@@ -126,6 +136,7 @@ class CategoryControllerTest {
     // ========================
 
     @Test
+    @WithMockUser
     void deleteCategory_shouldReturn204_whenExists() throws Exception {
         // GIVEN
         doNothing().when(categoryService).delete(1L);
@@ -136,6 +147,7 @@ class CategoryControllerTest {
     }
 
     @Test
+    @WithMockUser
     void deleteCategory_shouldReturn404_whenNotExists() throws Exception {
         // GIVEN
         doThrow(new ResourceNotFoundException("Category not found with id 99"))

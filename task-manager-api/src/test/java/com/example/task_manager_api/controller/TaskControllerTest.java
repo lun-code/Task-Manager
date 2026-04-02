@@ -1,5 +1,6 @@
 package com.example.task_manager_api.controller;
 
+import com.example.task_manager_api.config.TestSecurityConfig;
 import com.example.task_manager_api.dto.task.TaskCreateDTO;
 import com.example.task_manager_api.dto.task.TaskPageResponseDTO;
 import com.example.task_manager_api.dto.task.TaskResponseDTO;
@@ -9,7 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -22,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TaskController.class)
+@Import(TestSecurityConfig.class)
 class TaskControllerTest {
 
     @Autowired
@@ -38,6 +42,7 @@ class TaskControllerTest {
     // ========================
 
     @Test
+    @WithMockUser
     void getAllTasks_shouldReturn200WithPage() throws Exception {
         // GIVEN
         TaskResponseDTO task = TaskResponseDTO.builder()
@@ -59,6 +64,7 @@ class TaskControllerTest {
     }
 
     @Test
+    @WithMockUser
     void getAllTasks_shouldReturn200WithFilters() throws Exception {
         // GIVEN
         TaskPageResponseDTO emptyPage = new TaskPageResponseDTO(List.of(), 0, 0, 0L);
@@ -75,6 +81,7 @@ class TaskControllerTest {
     // ========================
 
     @Test
+    @WithMockUser
     void getTaskById_shouldReturn200_whenExists() throws Exception {
         // GIVEN
         UUID id = UUID.randomUUID();
@@ -94,6 +101,7 @@ class TaskControllerTest {
     }
 
     @Test
+    @WithMockUser
     void getTaskById_shouldReturn404_whenNotExists() throws Exception {
         // GIVEN
         UUID id = UUID.randomUUID();
@@ -109,6 +117,7 @@ class TaskControllerTest {
     // ========================
 
     @Test
+    @WithMockUser
     void createTask_shouldReturn201_whenValid() throws Exception {
         // GIVEN
         TaskCreateDTO dto = new TaskCreateDTO("Tarea 1", "Descripción", 1L);
@@ -131,8 +140,9 @@ class TaskControllerTest {
     }
 
     @Test
+    @WithMockUser
     void createTask_shouldReturn400_whenTitleIsBlank() throws Exception {
-        // GIVEN - título vacío, fallará la validación @NotBlank
+        // GIVEN
         TaskCreateDTO dto = new TaskCreateDTO("", "Descripción", 1L);
 
         // WHEN + THEN
@@ -143,8 +153,9 @@ class TaskControllerTest {
     }
 
     @Test
+    @WithMockUser
     void createTask_shouldReturn400_whenCategoryIdIsNull() throws Exception {
-        // GIVEN - categoryId null, fallará la validación @NotNull
+        // GIVEN
         TaskCreateDTO dto = new TaskCreateDTO("Tarea 1", "Descripción", null);
 
         // WHEN + THEN
@@ -159,6 +170,7 @@ class TaskControllerTest {
     // ========================
 
     @Test
+    @WithMockUser
     void patchTask_shouldReturn200_whenValid() throws Exception {
         // GIVEN
         UUID id = UUID.randomUUID();
@@ -181,6 +193,7 @@ class TaskControllerTest {
     }
 
     @Test
+    @WithMockUser
     void patchTask_shouldReturn404_whenNotExists() throws Exception {
         // GIVEN
         UUID id = UUID.randomUUID();
@@ -199,6 +212,7 @@ class TaskControllerTest {
     // ========================
 
     @Test
+    @WithMockUser
     void deleteTask_shouldReturn204_whenExists() throws Exception {
         // GIVEN
         UUID id = UUID.randomUUID();
@@ -210,6 +224,7 @@ class TaskControllerTest {
     }
 
     @Test
+    @WithMockUser
     void deleteTask_shouldReturn404_whenNotExists() throws Exception {
         // GIVEN
         UUID id = UUID.randomUUID();
