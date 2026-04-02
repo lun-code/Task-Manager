@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.task_manager_api.entity.Task;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
+import com.example.task_manager_api.entity.User;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -21,4 +23,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID>, JpaSpecificat
     // Sobreescribimos el método findAll que hereda de JpaSpecificationExecutor añadiéndole el @EntityGraph, así Spring sabe que siempre que usemos ese método debe hacer el JOIN con la categoría.
     @EntityGraph(attributePaths = "category") // Carga la categoría junto con la tarea en una sola consulta
     Page<Task> findAll(Specification<Task> spec, Pageable pageable);
+
+    // Busca solo si la tarea pertenece al usuario
+    Optional<Task> findByIdAndUser(UUID id, User user);
 }
