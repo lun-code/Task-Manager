@@ -4,11 +4,13 @@ import com.example.task_manager_api.dto.category.CategoryCreateDTO;
 import com.example.task_manager_api.dto.category.CategoryPatchDTO;
 import com.example.task_manager_api.dto.category.CategoryResponseDTO;
 import com.example.task_manager_api.entity.Category;
+import com.example.task_manager_api.entity.User;
 import com.example.task_manager_api.exception.DataConflictException;
 import com.example.task_manager_api.exception.ResourceNotFoundException;
 import com.example.task_manager_api.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,23 +21,36 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public List<CategoryResponseDTO> findAll(){
-        return categoryRepository.findAll()
+    private User getCurrentUser() {
+        return (User) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+    }
+
+    public List<CategoryResponseDTO> findAll() {
+        User currentUser = getCurrentUser();
+
+        return categoryRepository.findAllByUser(currentUser) // ← solo las del usuario
                 .stream()
                 .map(this::buildResponse)
                 .toList();
     }
 
     public CategoryResponseDTO findById(Long id) {
-        Category category = categoryRepository.findById(id)
+        User currentUser = getCurrentUser();
+
+        Category category = categoryRepository.findByIdAndUser(id, currentUser) // ← filtra por usuario
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
 
         return buildResponse(category);
     }
 
     public CategoryResponseDTO save(CategoryCreateDTO categoryCreateDTO) {
+        User currentUser = getCurrentUser();
+
         Category category = Category.builder()
                 .name(categoryCreateDTO.name())
+                .user(currentUser) // ← asigna el usuario
                 .build();
 
         try {
@@ -47,7 +62,9 @@ public class CategoryService {
     }
 
     public CategoryResponseDTO patch(Long id, CategoryPatchDTO categoryPatchDTO) {
-        Category category = categoryRepository.findById(id)
+        User currentUser = getCurrentUser();
+
+        Category category = categoryRepository.findByIdAndUser(id, currentUser) // ← filtra por usuario
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
 
         if (categoryPatchDTO.name() != null) {
@@ -63,9 +80,11 @@ public class CategoryService {
     }
 
     public void delete(Long id) {
-        if (!categoryRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Category not found with id " + id);
-        }
+        User currentUser = getCurrentUser();
+
+        // Si no existe o no es del usuario → mismo 404
+        categoryRepository.findByIdAndUser(id, currentUser)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
 
         try {
             categoryRepository.deleteById(id);
