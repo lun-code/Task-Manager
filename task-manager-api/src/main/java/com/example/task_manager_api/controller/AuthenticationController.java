@@ -7,6 +7,7 @@ import com.example.task_manager_api.dto.user.UserResponseDTO;
 import com.example.task_manager_api.entity.User;
 import com.example.task_manager_api.service.AuthenticationService;
 import com.example.task_manager_api.service.JwtService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserResponseDTO> register(@RequestBody RegisterUserDto registerUserDto) {
+    public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody RegisterUserDto registerUserDto) {
         User registeredUser = authenticationService.signup(registerUserDto);
 
         UserResponseDTO response = new UserResponseDTO(
@@ -38,7 +39,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
+    public ResponseEntity<LoginResponse> authenticate(@Valid @RequestBody LoginUserDto loginUserDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
