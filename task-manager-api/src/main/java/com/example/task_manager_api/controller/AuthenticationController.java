@@ -60,4 +60,10 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyAccount(@RequestParam String token) {
+        authenticationService.verifyAccount(token);
+        return ResponseEntity.ok("Cuenta verificada correctamente");
+    }
 }

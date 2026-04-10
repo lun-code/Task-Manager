@@ -42,6 +42,12 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(nullable = false)
+    private boolean verified = false;
+
+    @Column
+    private String verificationToken;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
