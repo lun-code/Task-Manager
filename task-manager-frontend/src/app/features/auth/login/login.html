@@ -1,0 +1,75 @@
+<div class="min-h-screen bg-[#0f0f0f] flex items-center justify-center p-6">
+
+  <div class="w-full max-w-[400px] bg-[#1a1a1a] border border-[#2a2a2a] rounded p-10 card-animate">
+
+    <div class="mb-8">
+      <h1 class="text-2xl font-medium text-[#e8e8e8] tracking-tight mb-1">Bienvenido</h1>
+      <p class="text-[#6b6b6b] text-sm">Inicia sesión para continuar</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <div class="mb-5 flex flex-col gap-1.5">
+        <label for="email" class="text-xs font-medium text-[#6b6b6b] uppercase tracking-widest font-dm-mono">
+          Email
+        </label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="tu@email.com"
+          autocomplete="email"
+          class="bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-colors placeholder:text-[#6b6b6b] focus:border-[#4a4a4a] w-full"
+          [class.input-invalid]="emailControl?.invalid && emailControl?.touched"
+        />
+        @if (emailControl?.invalid && emailControl?.touched) {
+          <span class="text-xs text-[#ff6b6b] font-dm-mono">Introduce un email válido</span>
+        }
+      </div>
+
+      <div class="mb-5 flex flex-col gap-1.5">
+        <label for="password" class="text-xs font-medium text-[#6b6b6b] uppercase tracking-widest font-dm-mono">
+          Contraseña
+        </label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          class="bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-colors placeholder:text-[#6b6b6b] focus:border-[#4a4a4a] w-full"
+          [class.input-invalid]="passwordControl?.invalid && passwordControl?.touched"
+        />
+        @if (passwordControl?.invalid && passwordControl?.touched) {
+          <span class="text-xs text-[#ff6b6b] font-dm-mono">La contraseña es obligatoria</span>
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <div class="bg-[rgba(255,107,107,0.08)] border border-[#ff6b6b] rounded-sm text-[#ff6b6b] text-sm px-3.5 py-2.5 mb-5">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <button
+        type="submit"
+        [disabled]="loading()"
+        class="w-full bg-[#d4f544] rounded-sm text-[#0f0f0f] text-sm font-medium py-3 mt-2 transition-colors hover:bg-[#b8d93a] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+      >
+        @if (loading()) {
+          Iniciando sesión...
+        } @else {
+          Iniciar sesión
+        }
+      </button>
+
+    </form>
+
+    <p class="text-center text-[#6b6b6b] text-sm mt-6">
+      ¿No tienes cuenta?
+      <a routerLink="/register" class="text-[#d4f544] no-underline font-medium hover:underline">Regístrate</a>
+    </p>
+
+  </div>
+
+</div>
