@@ -35,7 +35,7 @@ export class Register {
     const { fullName, email, password } = this.form.value;
 
     this.authService.register({ fullName: fullName!, email: email!, password: password! }).subscribe({
-      next: () => this.router.navigate(['/login']),
+      next: () => this.router.navigate(['/email-sent']),
       error: (err) => {
         if (err.status === 409) {
           this.errorMessage.set('Este email ya está en uso');

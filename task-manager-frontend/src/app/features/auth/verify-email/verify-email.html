@@ -1,0 +1,43 @@
+<div class="min-h-screen bg-[#0f0f0f] flex items-center justify-center p-6">
+
+  <div class="w-full max-w-[400px] bg-[#1a1a1a] border border-[#2a2a2a] rounded p-10 card-animate text-center">
+
+    @if (loading()) {
+      <div class="w-14 h-14 bg-[#2a2a2a] rounded-full flex items-center justify-center text-2xl mx-auto mb-6 animate-pulse">
+        ⏳
+      </div>
+      <h1 class="text-2xl font-medium text-[#e8e8e8] tracking-tight mb-2">Verificando...</h1>
+      <p class="text-[#6b6b6b] text-sm">Estamos verificando tu cuenta, un momento.</p>
+    }
+
+    @if (success()) {
+      <div class="w-14 h-14 bg-[#d4f544] text-[#0f0f0f] rounded-full flex items-center justify-center text-2xl mx-auto mb-6">
+        ✓
+      </div>
+      <h1 class="text-2xl font-medium text-[#e8e8e8] tracking-tight mb-2">¡Cuenta verificada!</h1>
+      <p class="text-[#6b6b6b] text-sm mb-6">Tu cuenta ha sido activada correctamente.</p>
+      <a
+        routerLink="/login"
+        class="inline-block w-full bg-[#d4f544] rounded-sm text-[#0f0f0f] text-sm font-medium py-3 mt-2 transition-colors hover:bg-[#b8d93a] cursor-pointer no-underline"
+      >
+        Iniciar sesión
+      </a>
+    }
+
+    @if (errorMessage()) {
+      <div class="w-14 h-14 bg-[rgba(255,107,107,0.1)] rounded-full flex items-center justify-center text-2xl mx-auto mb-6">
+        ✕
+      </div>
+      <h1 class="text-2xl font-medium text-[#e8e8e8] tracking-tight mb-2">Verificación fallida</h1>
+      <p class="text-[#6b6b6b] text-sm mb-6">{{ errorMessage() }}</p>
+      <a
+        routerLink="/register"
+        class="inline-block w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm font-medium py-3 mt-2 transition-colors hover:border-[#4a4a4a] cursor-pointer no-underline"
+      >
+        Volver al registro
+      </a>
+    }
+
+  </div>
+
+</div>
