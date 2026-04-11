@@ -1,36 +1,41 @@
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres:16
-    container_name: postgres_db
+  db:
+    image: postgres:15-alpine
+    container_name: task-manager-db
+    restart: always
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    ports:
-      - "5433:5432"
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: Europe/Madrid
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - db_network
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin_container
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASS}
+  backend:
+    build: 
+      context: .
+      dockerfile: dockerfile
+    container_name: task-manager-backend
+    restart: always
     ports:
-      - "5050:80"
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: Europe/Madrid
+      JAVA_TOOL_OPTIONS: -Duser.timezone=Europe/Madrid
     depends_on:
-      - postgres
-    networks:
-      - db_network
+      db:
+        condition: service_healthy
 
 volumes:
-  pgdata:
-
-networks:
-  db_network:
-    driver: bridge   
+  postgres_data:
