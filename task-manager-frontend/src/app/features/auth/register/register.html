@@ -1,52 +1,53 @@
 <div class="min-h-screen bg-[#0f0f0f] flex items-center justify-center p-6">
 
-  <div class="w-full max-w-[400px] bg-[#1a1a1a] border border-[#2a2a2a] rounded p-10 card-animate">
+  <div class="w-full max-w-[420px] auth-card-angular rounded-xl p-10 card-animate">
 
-    <div class="mb-8">
-      <h1 class="text-2xl font-medium text-[#e8e8e8] tracking-tight mb-1">Crear cuenta</h1>
-      <p class="text-[#6b6b6b] text-sm">Regístrate para empezar</p>
+    <div class="flex flex-col items-center mb-8">
+      <div class="relative w-14 h-14 flex items-center justify-center bg-[#1a1a1a] border border-[#3a3a3a] rounded-xl overflow-hidden mb-4">
+        <img src="favicon.ico" alt="Logo" class="w-9 h-9 object-contain" />
+      </div>
+      <h1 class="text-2xl font-bold text-[#e8e8e8] tracking-tight mb-1">Crear cuenta</h1>
+      <p class="text-[#6b6b6b] text-sm font-dm-mono uppercase tracking-widest text-center">Core System Access</p>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
       <div class="mb-5 flex flex-col gap-1.5">
-        <label for="fullName" class="text-xs font-medium text-[#6b6b6b] uppercase tracking-widest font-dm-mono">
+        <label for="fullName" class="text-[10px] font-bold text-[#b0b0b0] uppercase tracking-[0.2em] font-dm-mono">
           Nombre completo
         </label>
         <input
           id="fullName"
           type="text"
           formControlName="fullName"
-          placeholder="Tu nombre"
-          autocomplete="name"
-          class="bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-colors placeholder:text-[#6b6b6b] focus:border-[#4a4a4a] w-full"
+          placeholder="Escribe tu nombre"
+          class="focus-gradient-angular bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-4 py-3 outline-none transition-all placeholder:text-[#444] w-full"
           [class.input-invalid]="fullNameControl?.invalid && fullNameControl?.touched"
         />
         @if (fullNameControl?.invalid && fullNameControl?.touched) {
-          <span class="text-xs text-[#ff6b6b] font-dm-mono">Entre 3 y 50 caracteres</span>
+          <span class="text-[10px] text-[#E40035] font-dm-mono uppercase tracking-tighter mt-1">Nombre requerido (mín. 3 carac.)</span>
         }
       </div>
 
       <div class="mb-5 flex flex-col gap-1.5">
-        <label for="email" class="text-xs font-medium text-[#6b6b6b] uppercase tracking-widest font-dm-mono">
-          Email
+        <label for="email" class="text-[10px] font-bold text-[#b0b0b0] uppercase tracking-[0.2em] font-dm-mono">
+          Email de sistema
         </label>
         <input
           id="email"
           type="email"
           formControlName="email"
-          placeholder="tu@email.com"
-          autocomplete="email"
-          class="bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-colors placeholder:text-[#6b6b6b] focus:border-[#4a4a4a] w-full"
+          placeholder="usuario@dominio.com"
+          class="focus-gradient-angular bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-4 py-3 outline-none transition-all placeholder:text-[#444] w-full"
           [class.input-invalid]="emailControl?.invalid && emailControl?.touched"
         />
         @if (emailControl?.invalid && emailControl?.touched) {
-          <span class="text-xs text-[#ff6b6b] font-dm-mono">Introduce un email válido</span>
+          <span class="text-[10px] text-[#E40035] font-dm-mono uppercase tracking-tighter mt-1">Introduce un email corporativo válido</span>
         }
       </div>
 
-      <div class="mb-5 flex flex-col gap-1.5">
-        <label for="password" class="text-xs font-medium text-[#6b6b6b] uppercase tracking-widest font-dm-mono">
+      <div class="mb-6 flex flex-col gap-1.5">
+        <label for="password" class="text-[10px] font-bold text-[#b0b0b0] uppercase tracking-[0.2em] font-dm-mono">
           Contraseña
         </label>
         <input
@@ -54,40 +55,45 @@
           type="password"
           formControlName="password"
           placeholder="Mínimo 8 caracteres"
-          autocomplete="new-password"
-          class="bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-colors placeholder:text-[#6b6b6b] focus:border-[#4a4a4a] w-full"
+          class="focus-gradient-angular bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-4 py-3 outline-none transition-all placeholder:text-[#444] w-full"
           [class.input-invalid]="passwordControl?.invalid && passwordControl?.touched"
         />
         @if (passwordControl?.invalid && passwordControl?.touched) {
-          <span class="text-xs text-[#ff6b6b] font-dm-mono">Mínimo 8 caracteres</span>
+          <span class="text-[10px] text-[#E40035] font-dm-mono uppercase tracking-tighter mt-1">Seguridad insuficiente (mín. 8 carac.)</span>
         }
       </div>
 
       @if (errorMessage()) {
-        <div class="bg-[rgba(255,107,107,0.08)] border border-[#ff6b6b] rounded-sm text-[#ff6b6b] text-sm px-3.5 py-2.5 mb-5">
-          {{ errorMessage() }}
+        <div class="bg-[rgba(228,0,53,0.05)] border border-[#E40035]/50 rounded-sm text-[#ff6b6b] text-[11px] px-3.5 py-3 mb-6 font-dm-mono uppercase tracking-wider">
+          Error: {{ errorMessage() }}
         </div>
       }
 
       <button
         type="submit"
         [disabled]="loading()"
-        class="w-full bg-[#d4f544] rounded-sm text-[#0f0f0f] text-sm font-medium py-3 mt-2 transition-colors hover:bg-[#b8d93a] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+        class="w-full bg-gradient-to-r from-[#E40035] to-[#53239C] text-white text-xs font-bold uppercase tracking-[0.2em] py-4 rounded-sm hover:brightness-110 transition-all cursor-pointer shadow-[0_0_20px_rgba(228,0,53,0.2)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed border-none outline-none"
       >
         @if (loading()) {
-          Creando cuenta...
+          <span class="flex items-center justify-center gap-2">
+            <div class="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            Procesando...
+          </span>
         } @else {
-          Crear cuenta
+          Finalizar Registro
         }
       </button>
 
     </form>
 
-    <p class="text-center text-[#6b6b6b] text-sm mt-6">
-      ¿Ya tienes cuenta?
-      <a routerLink="/login" class="text-[#d4f544] no-underline font-medium hover:underline">Inicia sesión</a>
-    </p>
+    <div class="mt-8 pt-6 border-t border-[#2a2a2a] text-center">
+      <p class="text-[#6b6b6b] text-xs">
+        ¿Ya eres parte del equipo?
+        <a routerLink="/login" class="text-white no-underline font-bold hover:text-red-500 transition-colors ml-1 uppercase tracking-tighter">
+          Inicia sesión
+        </a>
+      </p>
+    </div>
 
   </div>
-
 </div>

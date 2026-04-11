@@ -1,30 +1,31 @@
-<!-- Overlay -->
-<div class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-6" (click)="onCancel()">
+<div class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-6">
 
-  <!-- Modal -->
   <div class="w-full max-w-[480px] bg-[#1a1a1a] border border-[#2a2a2a] rounded p-8 modal-animate" (click)="$event.stopPropagation()">
 
-    <div class="mb-6">
-      <h2 class="text-xl font-medium text-[#e8e8e8] tracking-tight">
-        {{ isEditing ? 'Editar tarea' : 'Nueva tarea' }}
-      </h2>
-      <p class="text-[#6b6b6b] text-sm mt-1">
-        {{ isEditing ? 'Modifica los campos que quieras' : 'Rellena los datos de la nueva tarea' }}
-      </p>
+    <div class="mb-6 flex gap-4">
+      <div class="w-1 bg-gradient-to-b from-[#E40035] to-[#53239C] rounded-full"></div>
+      
+      <div>
+        <h2 class="text-xl font-bold text-[#e8e8e8] tracking-tight">
+          {{ isEditing ? 'Editar tarea' : 'Nueva tarea' }}
+        </h2>
+        <p class="text-[#888888] text-sm mt-1">
+          {{ isEditing ? 'Modifica los campos que quieras' : 'Rellena los datos de la nueva tarea' }}
+        </p>
+      </div>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
-      <!-- Título -->
       <div class="mb-4 flex flex-col gap-1.5">
-        <label class="text-xs font-medium text-[#6b6b6b] uppercase tracking-widest font-dm-mono">
+        <label class="text-xs font-medium text-gray-300 uppercase tracking-widest font-dm-mono">
           Título
         </label>
         <input
           type="text"
           formControlName="title"
           placeholder="Nombre de la tarea"
-          class="bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-colors placeholder:text-[#6b6b6b] focus:border-[#4a4a4a] w-full"
+          class="focus-gradient-angular bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-all placeholder:text-[#6b6b6b] w-full"
           [class.input-invalid]="titleControl?.invalid && titleControl?.touched"
         />
         @if (titleControl?.invalid && titleControl?.touched) {
@@ -32,16 +33,15 @@
         }
       </div>
 
-      <!-- Descripción -->
       <div class="mb-4 flex flex-col gap-1.5">
-        <label class="text-xs font-medium text-[#6b6b6b] uppercase tracking-widest font-dm-mono">
+        <label class="text-xs font-medium text-gray-300 uppercase tracking-widest font-dm-mono">
           Descripción <span class="normal-case">(opcional)</span>
         </label>
         <textarea
           formControlName="description"
           placeholder="Añade una descripción..."
           rows="3"
-          class="bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-colors placeholder:text-[#6b6b6b] focus:border-[#4a4a4a] w-full resize-none"
+          class="focus-gradient-angular bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-all placeholder:text-[#6b6b6b] w-full resize-none"
           [class.input-invalid]="descriptionControl?.invalid && descriptionControl?.touched"
         ></textarea>
         @if (descriptionControl?.invalid && descriptionControl?.touched) {
@@ -49,15 +49,14 @@
         }
       </div>
 
-      <!-- Categoría -->
       <div class="mb-4 flex flex-col gap-1.5">
-        <label class="text-xs font-medium text-[#6b6b6b] uppercase tracking-widest font-dm-mono">
+        <label class="text-xs font-medium text-gray-300 uppercase tracking-widest font-dm-mono">
           Categoría
         </label>
         <div class="flex gap-2">
           <select
             formControlName="categoryId"
-            class="bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-colors focus:border-[#4a4a4a] flex-1"
+            class="focus-gradient-angular bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-all flex-1"
             [class.input-invalid]="categoryControl?.invalid && categoryControl?.touched"
           >
             <option [ngValue]="null" disabled>Selecciona una categoría</option>
@@ -79,9 +78,8 @@
         }
       </div>
 
-      <!-- Formulario nueva categoría -->
       @if (showCategoryForm()) {
-        <div class="mb-4 bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm p-3 flex gap-2">
+        <div class="focus-within:focus-gradient-angular mb-4 bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm p-3 flex gap-2 transition-all">
           <input
             type="text"
             [value]="newCategoryName()"
@@ -92,16 +90,9 @@
           <button
             type="button"
             (click)="saveNewCategory()"
-            class="text-[#d4f544] text-sm font-medium hover:text-[#b8d93a] transition-colors cursor-pointer bg-transparent border-none"
+            class="bg-gradient-to-r from-[#E40035] to-[#53239C] bg-clip-text text-transparent text-sm font-medium hover:brightness-125 transition-all cursor-pointer bg-transparent border-none"
           >
             Guardar
-          </button>
-          <button
-            type="button"
-            (click)="toggleCategoryForm()"
-            class="text-[#6b6b6b] text-sm hover:text-[#e8e8e8] transition-colors cursor-pointer bg-transparent border-none"
-          >
-            Cancelar
           </button>
         </div>
       }
@@ -112,19 +103,18 @@
         </div>
       }
 
-      <!-- Botones -->
       <div class="flex gap-3 mt-6">
         <button
           type="button"
           (click)="onCancel()"
-          class="flex-1 bg-transparent border border-[#2a2a2a] rounded-sm text-[#6b6b6b] text-sm font-medium py-2.5 hover:border-[#4a4a4a] hover:text-[#e8e8e8] transition-colors cursor-pointer"
+          class="flex-1 bg-transparent border border-[#3d3d3d] rounded-sm text-gray-400 text-sm font-medium py-2.5 hover:border-[#E40035] hover:text-white transition-all duration-200 cursor-pointer"
         >
           Cancelar
         </button>
         <button
           type="submit"
           [disabled]="loading()"
-          class="flex-1 bg-[#d4f544] rounded-sm text-[#0f0f0f] text-sm font-medium py-2.5 hover:bg-[#b8d93a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          class="flex-1 bg-gradient-to-r from-[#E40035] to-[#53239C] rounded-sm text-white text-sm font-medium py-2.5 shadow-md transition-all duration-200 enabled:hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           @if (loading()) {
             Guardando...

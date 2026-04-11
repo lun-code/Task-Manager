@@ -1,3 +1,73 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+/* Efecto de borde degradado Angular mejorado */
+.focus-gradient-angular:focus, 
+.focus-gradient-angular:hover,
+.focus-within\:focus-gradient-angular:focus-within {
+  outline: none !important;
+  border: 1px solid transparent !important; /* Forzamos transparencia */
+  background: 
+    linear-gradient(#0f0f0f, #0f0f0f) padding-box, 
+    linear-gradient(to right, #E40035, #53239C) border-box !important;
+  box-shadow: 0 0 10px rgba(228, 0, 53, 0.1);
+  transition: all 0.2s ease;
+}
+
+.nav-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #888888;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.nav-link:hover {
+  color: #e8e8e8;
+}
+
+/* Indicador activo: Una pequeña cápsula de luz sutil */
+.active-link {
+  color: #fff !important;
+}
+
+.active-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: #E40035;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #E40035;
+}
+
+/* Hover para el botón de salir tipográfico */
+.hover-salir:hover {
+  color: #E40035 !important;
+}
+
+/* Efecto para las tarjetas de la lista */
+.row-angular-hover:hover {
+  border-color: transparent !important;
+  background: 
+    linear-gradient(#141414, #141414) padding-box, 
+    linear-gradient(to right, #E40035, #53239C) border-box !important;
+  border: 1px solid transparent !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card con borde degradado para Auth */
+.auth-card-angular {
+  background: 
+    linear-gradient(#1a1a1a, #1a1a1a) padding-box, 
+    linear-gradient(to bottom right, #E40035, #53239C) border-box !important;
+  border: 1px solid transparent !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}

@@ -1,154 +1,164 @@
-<div class="min-h-screen bg-[#0f0f0f] p-6">
+<div class="min-h-screen bg-[#0f0f0f] p-8">
   <div class="max-w-5xl mx-auto">
 
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <h1 class="text-2xl font-medium text-[#e8e8e8] tracking-tight">Tareas</h1>
-        <p class="text-[#6b6b6b] text-sm mt-1">{{ totalElements() }} tareas en total</p>
+    <div class="flex items-center justify-between mb-10">
+      <div class="flex gap-4">
+        <div class="w-1 bg-gradient-to-b from-[#E40035] to-[#53239C] rounded-full"></div>
+        <div>
+          <h1 class="text-3xl font-bold text-[#e8e8e8] tracking-tight">Tareas</h1>
+          <p class="text-[#6b6b6b] text-sm mt-1 font-dm-mono uppercase tracking-widest leading-none">
+            {{ totalElements() }} tareas registradas
+          </p>
+        </div>
       </div>
+      
       <button
+        type="button"
         (click)="openCreateModal()"
-        class="bg-[#d4f544] text-[#0f0f0f] text-sm font-medium px-4 py-2.5 rounded-sm hover:bg-[#b8d93a] transition-colors cursor-pointer"
+        class="relative z-10 bg-gradient-to-r from-[#E40035] to-[#53239C] text-white text-sm font-bold px-6 py-3 rounded-sm hover:brightness-110 transition-all cursor-pointer shadow-[0_0_20px_rgba(228,0,53,0.2)] active:scale-95 border-none outline-none"
       >
         + Nueva tarea
       </button>
     </div>
 
-    <!-- Filtros -->
-    <div class="flex gap-3 mb-6">
-      <select
-        (change)="onFilterCompleted($any($event.target).value)"
-        class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2 outline-none focus:border-[#4a4a4a] transition-colors cursor-pointer"
-      >
-        <option value="all">Todas</option>
-        <option value="false">Pendientes</option>
-        <option value="true">Completadas</option>
-      </select>
+    <div class="flex gap-4 mb-8">
+      <div class="relative group">
+        <select
+          (change)="onFilterCompleted($any($event.target).value)"
+          class="focus-gradient-angular bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-4 py-2.5 outline-none transition-all cursor-pointer appearance-none pr-10"
+        >
+          <option value="all">Estado: Todos</option>
+          <option value="false">Pendientes</option>
+          <option value="true">Completadas</option>
+        </select>
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[#6b6b6b] pointer-events-none text-[10px]">▼</span>
+      </div>
 
-      <select
-        (change)="onFilterCategory($any($event.target).value)"
-        class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2 outline-none focus:border-[#4a4a4a] transition-colors cursor-pointer"
-      >
-        <option value="all">Todas las categorías</option>
-        @for (category of categories(); track category.id) {
-          <option [value]="category.id">{{ category.name }}</option>
-        }
-      </select>
+      <div class="relative group">
+        <select
+          (change)="onFilterCategory($any($event.target).value)"
+          class="focus-gradient-angular bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-4 py-2.5 outline-none transition-all cursor-pointer appearance-none pr-10"
+        >
+          <option value="all">Categoría: Todas</option>
+          @for (category of categories(); track category.id) {
+            <option [value]="category.id">{{ category.name }}</option>
+          }
+        </select>
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[#6b6b6b] pointer-events-none text-[10px]">▼</span>
+      </div>
     </div>
 
-    <!-- Tabla -->
-    <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded overflow-hidden">
-
+    <div class="space-y-3">
       @if (loading()) {
-        <div class="flex items-center justify-center py-16">
-          <span class="text-[#6b6b6b] text-sm">Cargando...</span>
+        <div class="flex flex-col items-center justify-center py-24 gap-4 bg-[#141414] border border-[#2a2a2a] rounded-lg">
+          <div class="w-8 h-8 border-2 border-t-[#E40035] border-r-transparent border-b-[#53239C] border-l-transparent rounded-full animate-spin"></div>
+          <span class="text-[#6b6b6b] text-xs uppercase tracking-[0.2em] font-dm-mono">Sincronizando...</span>
         </div>
       } @else if (tasks().length === 0) {
-        <div class="flex flex-col items-center justify-center py-16 gap-3">
-          <span class="text-4xl">✓</span>
-          <p class="text-[#6b6b6b] text-sm">No hay tareas. ¡Crea una!</p>
+        <div class="flex flex-col items-center justify-center py-24 gap-4 bg-[#141414] border border-[#2a2a2a] rounded-lg">
+          <p class="text-[#6b6b6b] text-sm font-dm-mono uppercase tracking-widest">No hay tareas en esta vista</p>
         </div>
       } @else {
 
-        <!-- Cabecera tabla -->
-        <div class="grid grid-cols-[auto_1fr_160px_120px_100px] gap-4 px-5 py-3 border-b border-[#2a2a2a]">
-          <span class="text-xs text-[#6b6b6b] uppercase tracking-widest font-dm-mono"></span>
-          <span class="text-xs text-[#6b6b6b] uppercase tracking-widest font-dm-mono">Título</span>
-          <span class="text-xs text-[#6b6b6b] uppercase tracking-widest font-dm-mono">Categoría</span>
-          <span class="text-xs text-[#6b6b6b] uppercase tracking-widest font-dm-mono">Fecha</span>
-          <span class="text-xs text-[#6b6b6b] uppercase tracking-widest font-dm-mono">Acciones</span>
+        <div class="grid grid-cols-[50px_1fr_140px_140px_100px] gap-4 px-8 py-2">
+          <span></span>
+          <span class="text-[10px] text-[#b0b0b0] uppercase tracking-[0.3em] font-bold font-dm-mono">Tarea</span>
+          <span class="text-[10px] text-[#b0b0b0] uppercase tracking-[0.3em] font-bold font-dm-mono text-center">Categoría</span>
+          <span class="text-[10px] text-[#b0b0b0] uppercase tracking-[0.3em] font-bold font-dm-mono">Fecha</span>
+          <span class="text-[10px] text-[#b0b0b0] uppercase tracking-[0.3em] font-bold font-dm-mono text-right">Acciones</span>
         </div>
 
-        <!-- Filas -->
         @for (task of tasks(); track task.id) {
           <div
-            class="grid grid-cols-[auto_1fr_160px_120px_100px] gap-4 px-5 py-4 border-b border-[#2a2a2a] last:border-0 hover:bg-[#222] transition-colors items-center"
-            [class.opacity-50]="task.completed"
+            class="row-angular-hover grid grid-cols-[50px_1fr_140px_140px_100px] gap-4 px-8 py-5 bg-[#141414] border border-[#2a2a2a] rounded-sm transition-all items-center group relative overflow-hidden"
           >
-            <!-- Checkbox -->
-            <input
-              type="checkbox"
-              [checked]="task.completed"
-              (change)="toggleComplete(task)"
-              class="w-4 h-4 accent-[#d4f544] cursor-pointer"
-            />
+            <div 
+              class="absolute left-0 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#E40035] to-[#53239C] opacity-0 group-hover:opacity-100 transition-opacity"
+              [class.opacity-100]="task.completed"
+            ></div>
 
-            <!-- Título + descripción -->
-            <div>
+            <div class="flex justify-center relative z-10">
+              <input
+                type="checkbox"
+                [checked]="task.completed"
+                (change)="toggleComplete(task)"
+                class="w-5 h-5 accent-[#E40035] cursor-pointer"
+              />
+            </div>
+
+            <div class="flex flex-col min-w-0" [class.opacity-40]="task.completed">
               <p
-                class="text-[#e8e8e8] text-sm font-medium"
+                class="text-[#e8e8e8] text-[15px] font-bold tracking-tight transition-all group-hover:text-white"
                 [class.line-through]="task.completed"
               >
                 {{ task.title }}
               </p>
               @if (task.description) {
-                <p class="text-[#6b6b6b] text-xs mt-0.5 truncate">{{ task.description }}</p>
+                <p class="text-[#6b6b6b] text-xs mt-1 truncate max-w-md">{{ task.description }}</p>
               }
             </div>
 
-            <!-- Categoría -->
-            <span class="text-xs text-[#6b6b6b] bg-[#2a2a2a] px-2.5 py-1 rounded-full w-fit font-dm-mono">
-              {{ task.categoryName }}
-            </span>
+            <div class="flex justify-center" [class.opacity-40]="task.completed">
+              <span class="text-[10px] text-[#e8e8e8] bg-[#0f0f0f] border border-[#2a2a2a] px-3 py-1 rounded-sm font-dm-mono font-bold uppercase tracking-wider group-hover:border-[#3a3a3a] transition-colors">
+                {{ task.categoryName }}
+              </span>
+            </div>
 
-            <!-- Fecha -->
-            <span class="text-xs text-[#6b6b6b] font-dm-mono">
+            <span class="text-xs text-[#777] font-dm-mono group-hover:text-[#aaa] transition-colors" [class.opacity-40]="task.completed">
               {{ formatDate(task.createdAt) }}
             </span>
 
-            <!-- Acciones -->
-            <div class="flex gap-2">
+            <div class="flex gap-5 justify-end relative z-30"> 
               <button
+                type="button"
                 (click)="openEditModal(task)"
-                class="text-[#6b6b6b] hover:text-[#e8e8e8] transition-colors cursor-pointer bg-transparent border-none text-sm"
+                class="text-[#6b6b6b] hover:text-white transition-all cursor-pointer bg-transparent border-none text-sm p-1 inline-flex items-center justify-center min-w-[24px]"
                 title="Editar"
               >
-                ✎
+                <span class="pointer-events-none">✎</span>
               </button>
               <button
+                type="button"
                 (click)="deleteTask(task)"
-                class="text-[#6b6b6b] hover:text-[#ff6b6b] transition-colors cursor-pointer bg-transparent border-none text-sm"
+                class="text-[#6b6b6b] hover:text-[#E40035] transition-all cursor-pointer bg-transparent border-none text-sm p-1 inline-flex items-center justify-center min-w-[24px]"
                 title="Eliminar"
               >
-                ✕
+                <span class="pointer-events-none">✕</span>
               </button>
             </div>
-
           </div>
         }
       }
     </div>
 
-    <!-- Paginación -->
     @if (totalPages() > 1) {
-      <div class="flex items-center justify-between mt-4">
-        <span class="text-[#6b6b6b] text-sm font-dm-mono">
+      <div class="flex items-center justify-between mt-10 px-2">
+        <span class="text-[#6b6b6b] text-[10px] uppercase tracking-[0.2em] font-bold font-dm-mono">
           Página {{ currentPage() + 1 }} de {{ totalPages() }}
         </span>
-        <div class="flex gap-2">
+        <div class="flex gap-4">
           <button
+            type="button"
             (click)="goToPage(currentPage() - 1)"
             [disabled]="currentPage() === 0"
-            class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-4 py-2 hover:border-[#4a4a4a] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            class="bg-[#141414] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-[10px] font-bold uppercase tracking-widest px-6 py-3 hover:border-[#E40035] disabled:opacity-10 transition-all cursor-pointer active:scale-95"
           >
-            ← Anterior
+            Anterior
           </button>
           <button
+            type="button"
             (click)="goToPage(currentPage() + 1)"
             [disabled]="currentPage() >= totalPages() - 1"
-            class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-4 py-2 hover:border-[#4a4a4a] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            class="bg-[#141414] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-[10px] font-bold uppercase tracking-widest px-6 py-3 hover:border-[#E40035] disabled:opacity-10 transition-all cursor-pointer active:scale-95"
           >
-            Siguiente →
+            Siguiente
           </button>
         </div>
       </div>
     }
-
   </div>
 </div>
 
-<!-- Modal -->
 @if (showModal()) {
   <app-task-form-modal
     [task]="selectedTask()"
