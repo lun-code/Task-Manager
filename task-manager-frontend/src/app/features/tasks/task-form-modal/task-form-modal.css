@@ -8,6 +8,25 @@
   font-family: 'DM Mono', monospace;
 }
 
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-animate {
+  animation: modalIn 0.2s ease;
+}
+
+.input-invalid {
+  border-color: #ff6b6b !important;
+}
+
 select option {
   background: #1a1a1a;
   color: #e8e8e8;

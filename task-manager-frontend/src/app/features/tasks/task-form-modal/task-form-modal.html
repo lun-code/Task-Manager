@@ -1,0 +1,141 @@
+<!-- Overlay -->
+<div class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-6" (click)="onCancel()">
+
+  <!-- Modal -->
+  <div class="w-full max-w-[480px] bg-[#1a1a1a] border border-[#2a2a2a] rounded p-8 modal-animate" (click)="$event.stopPropagation()">
+
+    <div class="mb-6">
+      <h2 class="text-xl font-medium text-[#e8e8e8] tracking-tight">
+        {{ isEditing ? 'Editar tarea' : 'Nueva tarea' }}
+      </h2>
+      <p class="text-[#6b6b6b] text-sm mt-1">
+        {{ isEditing ? 'Modifica los campos que quieras' : 'Rellena los datos de la nueva tarea' }}
+      </p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <!-- Título -->
+      <div class="mb-4 flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-[#6b6b6b] uppercase tracking-widest font-dm-mono">
+          Título
+        </label>
+        <input
+          type="text"
+          formControlName="title"
+          placeholder="Nombre de la tarea"
+          class="bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-colors placeholder:text-[#6b6b6b] focus:border-[#4a4a4a] w-full"
+          [class.input-invalid]="titleControl?.invalid && titleControl?.touched"
+        />
+        @if (titleControl?.invalid && titleControl?.touched) {
+          <span class="text-xs text-[#ff6b6b] font-dm-mono">Entre 3 y 100 caracteres</span>
+        }
+      </div>
+
+      <!-- Descripción -->
+      <div class="mb-4 flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-[#6b6b6b] uppercase tracking-widest font-dm-mono">
+          Descripción <span class="normal-case">(opcional)</span>
+        </label>
+        <textarea
+          formControlName="description"
+          placeholder="Añade una descripción..."
+          rows="3"
+          class="bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-colors placeholder:text-[#6b6b6b] focus:border-[#4a4a4a] w-full resize-none"
+          [class.input-invalid]="descriptionControl?.invalid && descriptionControl?.touched"
+        ></textarea>
+        @if (descriptionControl?.invalid && descriptionControl?.touched) {
+          <span class="text-xs text-[#ff6b6b] font-dm-mono">Máximo 255 caracteres</span>
+        }
+      </div>
+
+      <!-- Categoría -->
+      <div class="mb-4 flex flex-col gap-1.5">
+        <label class="text-xs font-medium text-[#6b6b6b] uppercase tracking-widest font-dm-mono">
+          Categoría
+        </label>
+        <div class="flex gap-2">
+          <select
+            formControlName="categoryId"
+            class="bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2.5 outline-none transition-colors focus:border-[#4a4a4a] flex-1"
+            [class.input-invalid]="categoryControl?.invalid && categoryControl?.touched"
+          >
+            <option [ngValue]="null" disabled>Selecciona una categoría</option>
+            @for (category of categories(); track category.id) {
+              <option [ngValue]="category.id">{{ category.name }}</option>
+            }
+          </select>
+          <button
+            type="button"
+            (click)="toggleCategoryForm()"
+            class="bg-[#2a2a2a] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3 py-2.5 hover:bg-[#3a3a3a] transition-colors cursor-pointer"
+            title="Nueva categoría"
+          >
+            +
+          </button>
+        </div>
+        @if (categoryControl?.invalid && categoryControl?.touched) {
+          <span class="text-xs text-[#ff6b6b] font-dm-mono">Selecciona una categoría</span>
+        }
+      </div>
+
+      <!-- Formulario nueva categoría -->
+      @if (showCategoryForm()) {
+        <div class="mb-4 bg-[#0f0f0f] border border-[#2a2a2a] rounded-sm p-3 flex gap-2">
+          <input
+            type="text"
+            [value]="newCategoryName()"
+            (input)="onNewCategoryNameChange($event)"
+            placeholder="Nombre de la categoría"
+            class="bg-transparent text-[#e8e8e8] text-sm outline-none placeholder:text-[#6b6b6b] flex-1"
+          />
+          <button
+            type="button"
+            (click)="saveNewCategory()"
+            class="text-[#d4f544] text-sm font-medium hover:text-[#b8d93a] transition-colors cursor-pointer bg-transparent border-none"
+          >
+            Guardar
+          </button>
+          <button
+            type="button"
+            (click)="toggleCategoryForm()"
+            class="text-[#6b6b6b] text-sm hover:text-[#e8e8e8] transition-colors cursor-pointer bg-transparent border-none"
+          >
+            Cancelar
+          </button>
+        </div>
+      }
+
+      @if (errorMessage()) {
+        <div class="bg-[rgba(255,107,107,0.08)] border border-[#ff6b6b] rounded-sm text-[#ff6b6b] text-sm px-3.5 py-2.5 mb-4">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <!-- Botones -->
+      <div class="flex gap-3 mt-6">
+        <button
+          type="button"
+          (click)="onCancel()"
+          class="flex-1 bg-transparent border border-[#2a2a2a] rounded-sm text-[#6b6b6b] text-sm font-medium py-2.5 hover:border-[#4a4a4a] hover:text-[#e8e8e8] transition-colors cursor-pointer"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="loading()"
+          class="flex-1 bg-[#d4f544] rounded-sm text-[#0f0f0f] text-sm font-medium py-2.5 hover:bg-[#b8d93a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+        >
+          @if (loading()) {
+            Guardando...
+          } @else {
+            {{ isEditing ? 'Guardar cambios' : 'Crear tarea' }}
+          }
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

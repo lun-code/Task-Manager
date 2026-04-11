@@ -1,1 +1,37 @@
-<p>navbar works!</p>
+<nav class="bg-[#1a1a1a] border-b border-[#2a2a2a] px-6 py-4">
+  <div class="max-w-5xl mx-auto flex items-center justify-between">
+
+    <!-- Logo -->
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 bg-[#d4f544] text-[#0f0f0f] rounded flex items-center justify-center text-sm font-bold">
+        ✓
+      </div>
+      <span class="text-[#e8e8e8] font-medium text-sm tracking-tight">TaskManager</span>
+    </div>
+
+    <!-- Links -->
+    <div class="flex items-center gap-1">
+      <a
+        routerLink="/tasks"
+        routerLinkActive="active-link"
+        class="nav-link"
+      >
+        Tareas
+      </a>
+    </div>
+
+    <!-- User + Logout -->
+    <div class="flex items-center gap-4">
+      @if (user()) {
+        <span class="text-[#6b6b6b] text-sm font-dm-mono">{{ user()!.fullName }}</span>
+      }
+      <button
+        (click)="logout()"
+        class="text-[#6b6b6b] text-sm hover:text-[#e8e8e8] transition-colors cursor-pointer bg-transparent border-none"
+      >
+        Salir
+      </button>
+    </div>
+
+  </div>
+</nav>

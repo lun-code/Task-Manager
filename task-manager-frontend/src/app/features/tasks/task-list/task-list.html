@@ -1,1 +1,158 @@
-<p>task-list works!</p>
+<div class="min-h-screen bg-[#0f0f0f] p-6">
+  <div class="max-w-5xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-medium text-[#e8e8e8] tracking-tight">Tareas</h1>
+        <p class="text-[#6b6b6b] text-sm mt-1">{{ totalElements() }} tareas en total</p>
+      </div>
+      <button
+        (click)="openCreateModal()"
+        class="bg-[#d4f544] text-[#0f0f0f] text-sm font-medium px-4 py-2.5 rounded-sm hover:bg-[#b8d93a] transition-colors cursor-pointer"
+      >
+        + Nueva tarea
+      </button>
+    </div>
+
+    <!-- Filtros -->
+    <div class="flex gap-3 mb-6">
+      <select
+        (change)="onFilterCompleted($any($event.target).value)"
+        class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2 outline-none focus:border-[#4a4a4a] transition-colors cursor-pointer"
+      >
+        <option value="all">Todas</option>
+        <option value="false">Pendientes</option>
+        <option value="true">Completadas</option>
+      </select>
+
+      <select
+        (change)="onFilterCategory($any($event.target).value)"
+        class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-3.5 py-2 outline-none focus:border-[#4a4a4a] transition-colors cursor-pointer"
+      >
+        <option value="all">Todas las categorías</option>
+        @for (category of categories(); track category.id) {
+          <option [value]="category.id">{{ category.name }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Tabla -->
+    <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded overflow-hidden">
+
+      @if (loading()) {
+        <div class="flex items-center justify-center py-16">
+          <span class="text-[#6b6b6b] text-sm">Cargando...</span>
+        </div>
+      } @else if (tasks().length === 0) {
+        <div class="flex flex-col items-center justify-center py-16 gap-3">
+          <span class="text-4xl">✓</span>
+          <p class="text-[#6b6b6b] text-sm">No hay tareas. ¡Crea una!</p>
+        </div>
+      } @else {
+
+        <!-- Cabecera tabla -->
+        <div class="grid grid-cols-[auto_1fr_160px_120px_100px] gap-4 px-5 py-3 border-b border-[#2a2a2a]">
+          <span class="text-xs text-[#6b6b6b] uppercase tracking-widest font-dm-mono"></span>
+          <span class="text-xs text-[#6b6b6b] uppercase tracking-widest font-dm-mono">Título</span>
+          <span class="text-xs text-[#6b6b6b] uppercase tracking-widest font-dm-mono">Categoría</span>
+          <span class="text-xs text-[#6b6b6b] uppercase tracking-widest font-dm-mono">Fecha</span>
+          <span class="text-xs text-[#6b6b6b] uppercase tracking-widest font-dm-mono">Acciones</span>
+        </div>
+
+        <!-- Filas -->
+        @for (task of tasks(); track task.id) {
+          <div
+            class="grid grid-cols-[auto_1fr_160px_120px_100px] gap-4 px-5 py-4 border-b border-[#2a2a2a] last:border-0 hover:bg-[#222] transition-colors items-center"
+            [class.opacity-50]="task.completed"
+          >
+            <!-- Checkbox -->
+            <input
+              type="checkbox"
+              [checked]="task.completed"
+              (change)="toggleComplete(task)"
+              class="w-4 h-4 accent-[#d4f544] cursor-pointer"
+            />
+
+            <!-- Título + descripción -->
+            <div>
+              <p
+                class="text-[#e8e8e8] text-sm font-medium"
+                [class.line-through]="task.completed"
+              >
+                {{ task.title }}
+              </p>
+              @if (task.description) {
+                <p class="text-[#6b6b6b] text-xs mt-0.5 truncate">{{ task.description }}</p>
+              }
+            </div>
+
+            <!-- Categoría -->
+            <span class="text-xs text-[#6b6b6b] bg-[#2a2a2a] px-2.5 py-1 rounded-full w-fit font-dm-mono">
+              {{ task.categoryName }}
+            </span>
+
+            <!-- Fecha -->
+            <span class="text-xs text-[#6b6b6b] font-dm-mono">
+              {{ formatDate(task.createdAt) }}
+            </span>
+
+            <!-- Acciones -->
+            <div class="flex gap-2">
+              <button
+                (click)="openEditModal(task)"
+                class="text-[#6b6b6b] hover:text-[#e8e8e8] transition-colors cursor-pointer bg-transparent border-none text-sm"
+                title="Editar"
+              >
+                ✎
+              </button>
+              <button
+                (click)="deleteTask(task)"
+                class="text-[#6b6b6b] hover:text-[#ff6b6b] transition-colors cursor-pointer bg-transparent border-none text-sm"
+                title="Eliminar"
+              >
+                ✕
+              </button>
+            </div>
+
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Paginación -->
+    @if (totalPages() > 1) {
+      <div class="flex items-center justify-between mt-4">
+        <span class="text-[#6b6b6b] text-sm font-dm-mono">
+          Página {{ currentPage() + 1 }} de {{ totalPages() }}
+        </span>
+        <div class="flex gap-2">
+          <button
+            (click)="goToPage(currentPage() - 1)"
+            [disabled]="currentPage() === 0"
+            class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-4 py-2 hover:border-[#4a4a4a] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          >
+            ← Anterior
+          </button>
+          <button
+            (click)="goToPage(currentPage() + 1)"
+            [disabled]="currentPage() >= totalPages() - 1"
+            class="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm px-4 py-2 hover:border-[#4a4a4a] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          >
+            Siguiente →
+          </button>
+        </div>
+      </div>
+    }
+
+  </div>
+</div>
+
+<!-- Modal -->
+@if (showModal()) {
+  <app-task-form-modal
+    [task]="selectedTask()"
+    (saved)="onModalSaved()"
+    (cancelled)="closeModal()"
+  />
+}
