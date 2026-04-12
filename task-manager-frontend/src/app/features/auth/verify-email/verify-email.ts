@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-verify-email',
@@ -17,7 +18,7 @@ export class VerifyEmail implements OnInit {
   protected readonly errorMessage = signal('');
 
   ngOnInit(): void {
-    const token = this.route.snapshot.queryParamMap.get('token'); // Lee el token de la URL, snapshot es una foto de la URL en el momento de la carga del componente
+    const token = this.route.snapshot.queryParamMap.get('token');
 
     if (!token) {
       this.loading.set(false);
@@ -25,7 +26,7 @@ export class VerifyEmail implements OnInit {
       return;
     }
 
-    this.http.get(`http://localhost:8080/api/auth/verify?token=${token}`, { responseType: 'text' }).subscribe({ // ResponseType es text porque el backend devuelve un string simple, no un JSON, aunque se ignora en este caso
+    this.http.get(`${environment.apiUrl}/api/auth/verify?token=${token}`, { responseType: 'text' }).subscribe({
       next: () => {
         this.loading.set(false);
         this.success.set(true);
