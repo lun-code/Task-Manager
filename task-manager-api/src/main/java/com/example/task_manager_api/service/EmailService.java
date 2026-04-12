@@ -16,7 +16,7 @@ public class EmailService {
         message.setTo(to);
         message.setSubject("Verifica tu cuenta");
         message.setText("Haz clic en el siguiente enlace para verificar tu cuenta:\n\n"
-                + "http://localhost:4200/verify?token=" + token);
+                + "https://task-manager-nto7.vercel.app/verify?token=" + token);
 
         mailSender.send(message);
     }
