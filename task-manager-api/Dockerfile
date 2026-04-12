@@ -2,15 +2,13 @@
 FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
 
-# Copiamos primero solo el pom.xml para cachear dependencias
-COPY pom.xml .
-COPY .mvn .mvn
-COPY mvnw .
+COPY task-manager-api/pom.xml .
+COPY task-manager-api/.mvn .mvn
+COPY task-manager-api/mvnw .
 
 RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
 
-# Ahora copiamos el código fuente
-COPY src ./src
+COPY task-manager-api/src ./src
 
 RUN ./mvnw clean package -DskipTests -B
 
