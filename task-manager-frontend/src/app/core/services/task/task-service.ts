@@ -7,13 +7,14 @@ import {
   TaskCreateRequest,
   TaskPatchRequest,
 } from '../../models/task.models';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8080/api/tasks';
+  private readonly apiUrl = `${environment.apiUrl}/api/tasks`;
 
   // Obtener tareas con filtros y paginación
   findAll(page: number = 0, size: number = 10, completed?: boolean, categoryId?: number): Observable<TaskPageResponse> {

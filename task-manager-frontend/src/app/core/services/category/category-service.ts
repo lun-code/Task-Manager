@@ -5,13 +5,14 @@ import {
   CategoryResponse,
   CategoryCreateRequest,
 } from '../../models/category.models';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoryService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8080/api/categories';
+  private readonly apiUrl = `${environment.apiUrl}/api/categories`;
 
   findAll(): Observable<CategoryResponse[]> {
     return this.http.get<CategoryResponse[]>(this.apiUrl);
