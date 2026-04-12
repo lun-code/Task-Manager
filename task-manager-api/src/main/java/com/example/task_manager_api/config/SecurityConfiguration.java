@@ -54,7 +54,7 @@ public class SecurityConfiguration {
 
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:4200",
-                "task-manager-production-8226.up.railway.app"
+                "https://task-manager-nto7.vercel.app"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
