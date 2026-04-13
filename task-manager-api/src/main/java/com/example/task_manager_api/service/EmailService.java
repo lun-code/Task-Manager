@@ -20,7 +20,7 @@ public class EmailService {
 
     public void sendVerificationEmail(String to, String token) {
 
-        String verificationUrl = "https://task-manager-production-ccc6.up.railway.app/api/auth/verify?token=" + token;
+        String verificationUrl = "https://task-manager-nto7.vercel.app/verify?token=" + token;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("api-key", apiKey);

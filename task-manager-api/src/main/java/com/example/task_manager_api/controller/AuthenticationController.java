@@ -62,8 +62,11 @@ public class AuthenticationController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<String> verifyAccount(@RequestParam String token) {
+    public ResponseEntity<Void> verifyAccount(@RequestParam String token) {
         authenticationService.verifyAccount(token);
-        return ResponseEntity.ok("Cuenta verificada correctamente");
+
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header("Location", "https://tu-frontend.com/verified")
+                .build();
     }
 }
