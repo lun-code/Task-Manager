@@ -43,7 +43,7 @@ public class AuthenticationService {
             User savedUser = userRepository.save(user);
             emailService.sendVerificationEmail(savedUser.getEmail(), verificationToken);
             return savedUser;
-        } catch (DataIntegrityViolationException) {
+        } catch (DataIntegrityViolationException e) {
             throw new DataConflictException("Email already in use");
         }
     }
