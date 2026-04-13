@@ -6,7 +6,6 @@ import com.example.task_manager_api.entity.User;
 import com.example.task_manager_api.exception.DataConflictException;
 import com.example.task_manager_api.exception.ResourceNotFoundException;
 import com.example.task_manager_api.repository.UserRepository;
-import com.resend.core.exception.ResendException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
