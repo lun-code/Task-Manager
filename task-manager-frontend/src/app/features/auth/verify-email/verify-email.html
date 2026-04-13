@@ -1,43 +1,45 @@
 <div class="min-h-screen bg-[#0f0f0f] flex items-center justify-center p-6">
-
-  <div class="w-full max-w-[400px] bg-[#1a1a1a] border border-[#2a2a2a] rounded p-10 card-animate text-center">
+  <div class="w-full max-w-[420px] auth-card-angular rounded-xl p-10 card-animate text-center">
 
     @if (loading()) {
-      <div class="w-14 h-14 bg-[#2a2a2a] rounded-full flex items-center justify-center text-2xl mx-auto mb-6 animate-pulse">
-        ⏳
+      <div class="flex flex-col items-center py-4">
+        <div class="w-12 h-12 border-2 border-[#53239C]/30 border-t-[#E40035] rounded-full animate-spin mb-6"></div>
+        <h1 class="text-xl font-bold text-[#e8e8e8] tracking-tight uppercase font-dm-mono">Verificando...</h1>
       </div>
-      <h1 class="text-2xl font-medium text-[#e8e8e8] tracking-tight mb-2">Verificando...</h1>
-      <p class="text-[#6b6b6b] text-sm">Estamos verificando tu cuenta, un momento.</p>
     }
 
     @if (success()) {
-      <div class="w-14 h-14 bg-[#d4f544] text-[#0f0f0f] rounded-full flex items-center justify-center text-2xl mx-auto mb-6">
-        ✓
+      <div class="flex flex-col items-center">
+        <div class="w-16 h-16 bg-[rgba(83,35,156,0.1)] border border-[#53239C]/40 rounded-xl flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(83,35,156,0.2)]">
+          <span class="text-white text-3xl">✓</span>
+        </div>
+        
+        <h1 class="text-2xl font-bold text-[#e8e8e8] tracking-tight mb-1">Acceso Concedido</h1>
+        <p class="text-[#6b6b6b] text-[10px] font-dm-mono uppercase tracking-[0.2em] mb-8">Security Protocol Cleared</p>
+        
+        <button
+          routerLink="/login"
+          class="w-full bg-gradient-to-r from-[#E40035] to-[#53239C] text-white text-xs font-bold uppercase tracking-[0.2em] py-4 rounded-sm hover:brightness-110 transition-all shadow-[0_0_20px_rgba(228,0,53,0.2)] active:scale-[0.98] border-none outline-none cursor-pointer"
+        >
+          Entrar al Sistema
+        </button>
       </div>
-      <h1 class="text-2xl font-medium text-[#e8e8e8] tracking-tight mb-2">¡Cuenta verificada!</h1>
-      <p class="text-[#6b6b6b] text-sm mb-6">Tu cuenta ha sido activada correctamente.</p>
-      <a
-        routerLink="/login"
-        class="inline-block w-full bg-[#d4f544] rounded-sm text-[#0f0f0f] text-sm font-medium py-3 mt-2 transition-colors hover:bg-[#b8d93a] cursor-pointer no-underline"
-      >
-        Iniciar sesión
-      </a>
     }
 
     @if (errorMessage()) {
-      <div class="w-14 h-14 bg-[rgba(255,107,107,0.1)] rounded-full flex items-center justify-center text-2xl mx-auto mb-6">
-        ✕
+      <div class="flex flex-col items-center">
+        <div class="w-16 h-16 bg-[rgba(228,0,53,0.1)] border border-[#E40035]/30 rounded-xl flex items-center justify-center mb-6">
+          <span class="text-[#E40035] text-3xl">✕</span>
+        </div>
+        <h1 class="text-xl font-bold text-[#e8e8e8] tracking-tight mb-4 uppercase font-dm-mono">Token Inválido</h1>
+        <div class="bg-[rgba(228,0,53,0.05)] border border-[#E40035]/50 rounded-sm text-[#ff6b6b] text-[11px] px-3.5 py-3 mb-8 font-dm-mono uppercase tracking-wider">
+          Error: {{ errorMessage() }}
+        </div>
+        <a routerLink="/register" class="text-[#b0b0b0] text-xs uppercase tracking-widest hover:text-white transition-all underline decoration-[#E40035]">
+          Reintentar Registro
+        </a>
       </div>
-      <h1 class="text-2xl font-medium text-[#e8e8e8] tracking-tight mb-2">Verificación fallida</h1>
-      <p class="text-[#6b6b6b] text-sm mb-6">{{ errorMessage() }}</p>
-      <a
-        routerLink="/register"
-        class="inline-block w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm text-[#e8e8e8] text-sm font-medium py-3 mt-2 transition-colors hover:border-[#4a4a4a] cursor-pointer no-underline"
-      >
-        Volver al registro
-      </a>
     }
 
   </div>
-
 </div>
