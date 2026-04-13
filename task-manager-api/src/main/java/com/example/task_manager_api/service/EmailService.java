@@ -1,23 +1,21 @@
 package com.example.task_manager_api.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
+import com.resend.services.emails.model.CreateEmailResponse;
 
-@Service
-@RequiredArgsConstructor
 public class EmailService {
+    public void sendVerificationEmail(String userEmail, String token) throws ResendException {
+        Resend resend = new Resend("re_LizEknLZ_8wivDtqWQtW9RwXLvzgVuzNQ");
 
-    private final JavaMailSender mailSender;
+        CreateEmailOptions params = CreateEmailOptions.builder()
+                .from("onboarding@resend.dev")
+                .to(userEmail)
+                .subject("Verificación")
+                .html("<p>Haz click en el enlace para confirmar tu cuenta: \n\n</p>" + "<p>https://task-manager-nto7.vercel.app/verify?token=</p>" + token)
+                .build();
 
-    public void sendVerificationEmail(String to, String token) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject("Verifica tu cuenta");
-        message.setText("Haz clic en el siguiente enlace para verificar tu cuenta:\n\n"
-                + "https://task-manager-nto7.vercel.app/verify?token=" + token);
-
-        mailSender.send(message);
+        CreateEmailResponse data = resend.emails().send(params);
     }
 }

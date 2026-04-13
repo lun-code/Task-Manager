@@ -6,6 +6,7 @@ import com.example.task_manager_api.entity.User;
 import com.example.task_manager_api.exception.DataConflictException;
 import com.example.task_manager_api.exception.ResourceNotFoundException;
 import com.example.task_manager_api.repository.UserRepository;
+import com.resend.core.exception.ResendException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,7 +43,7 @@ public class AuthenticationService {
             User savedUser = userRepository.save(user);
             emailService.sendVerificationEmail(savedUser.getEmail(), verificationToken);
             return savedUser;
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | ResendException e) {
             throw new DataConflictException("Email already in use");
         }
     }
