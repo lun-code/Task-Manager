@@ -66,7 +66,7 @@ public class AuthenticationController {
         authenticationService.verifyAccount(token);
 
         return ResponseEntity.status(HttpStatus.FOUND)
-                .header("Location", "https://tu-frontend.com/verified")
+                .header("Location", "https://task-manager-nto7.vercel.app/verified")
                 .build();
     }
 }
